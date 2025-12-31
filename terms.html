@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>General Terms - AeroSilva</title>
+
+    <title>Privacy Policy - AeroSilva</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,10 +28,11 @@
     <header id="topBar" class="fixed top-0 inset-x-0 h-16 bg-white/80 dark:bg-slate-900/70 backdrop-blur-sm z-50">
         <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="/" class="text-lg font-semibold">AeroSilva</a>
+
+                <a href="./" class="text-lg font-semibold">AeroSilva</a>
             </div>
             <div class="flex items-center gap-3">
-                <a href="/"
+                <a href="./"
                     class="px-4 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Home</a>
                 <button id="themeBtn"
                     class="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700 transition text-sm"
@@ -43,29 +45,26 @@
 
     <main class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-4xl w-full prose prose-slate dark:prose-invert">
-            <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-center">General Terms</h1>
-            <p>This website is provided for informational purposes only. The content is provided "as is" and we make no
-                representations or warranties of any kind, express or implied, about the completeness, accuracy,
-                reliability, suitability or availability with respect to the website or the information, products,
-                services, or related graphics contained on the website for any purpose.</p>
-            <p>Any reliance you place on such information is therefore strictly at your own risk. In no event will we be
-                liable for any loss or damage including without limitation, indirect or consequential loss or damage, or
-                any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection
-                with, the use of this website.</p>
+            <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-center">Privacy Policy</h1>
+            <p>This website is for informational purposes only. We do not collect, store, or process any personal
+                information from our visitors.</p>
+            <p>Our goal is to provide information about our products and services in a transparent and respectful
+                manner. As such, we have designed this website to be a simple, read-only experience.</p>
+            <p>We do not use cookies, tracking pixels, or any other technologies to gather data about your browsing
+                habits. Your visit to this site is completely anonymous.</p>
         </div>
     </main>
 
     <footer
         class="text-center py-8 px-4 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800">
         <div class="space-y-2">
-            <p>© 2025 Flapper s.r.o. | Soubezna 1053/25, 46601 Jablonec nad Nisou, Czech Republic</p>
-            <p>Company registration ID: 17280419, VAT ID: CZ17280419</p>
+            <p>© 2025 AeroSilva Robotics</p>
             <div class="flex justify-center gap-4">
                 <a href="./privacy" class="hover:underline">Privacy Policy</a>
                 <a href="./cookies" class="hover:underline">Cookie Policy</a>
                 <a href="./terms" class="hover:underline">General Terms</a>
             </div>
-            <p class="pt-2">Designed by MageeWP Themes.</p>
+
         </div>
     </footer>
 
@@ -73,13 +72,14 @@
         const btn = document.getElementById('themeBtn');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
+        // apply theme: 'dark' | 'light'
         function applyTheme(mode) {
             if (mode === 'dark') document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
         }
 
         function getStoredTheme() {
-            return localStorage.getItem('theme');
+            return localStorage.getItem('theme'); // 'dark'|'light' or null
         }
 
         function updateButtonLabel() {
@@ -93,8 +93,9 @@
             }
         }
 
+        // Handles system theme changes
         const systemThemeChangeHandler = () => {
-            if (!getStoredTheme()) {
+            if (!getStoredTheme()) { // only apply if no override is set
                 applyTheme(prefersDark.matches ? 'dark' : 'light');
                 updateButtonLabel();
             }
@@ -102,6 +103,7 @@
         if (prefersDark.addEventListener) prefersDark.addEventListener('change', systemThemeChangeHandler);
         else if (prefersDark.addListener) prefersDark.addListener(systemThemeChangeHandler);
 
+        // initialize: follow stored override if present, otherwise follow system
         (function initTheme() {
             const stored = getStoredTheme();
             if (stored) applyTheme(stored);
@@ -109,16 +111,20 @@
             updateButtonLabel();
         })();
 
+        // click cycles through themes: System -> Opposite -> Dark -> System
         btn.addEventListener('click', () => {
             const stored = getStoredTheme();
 
             if (stored === 'light') {
+                // From Light -> Dark
                 localStorage.setItem('theme', 'dark');
                 applyTheme('dark');
             } else if (stored === 'dark') {
+                // From Dark -> System
                 localStorage.removeItem('theme');
                 applyTheme(prefersDark.matches ? 'dark' : 'light');
-            } else {
+            } else { // stored is null (system)
+                // From System -> Opposite of System
                 const next = prefersDark.matches ? 'light' : 'dark';
                 localStorage.setItem('theme', next);
                 applyTheme(next);
