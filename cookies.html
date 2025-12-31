@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cookie Policy - AeroSilva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-dark-blue': '#151B2C',
+                    },
+                    fontFamily: { inter: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="pt-16 antialiased font-inter bg-white text-slate-800 dark:bg-custom-dark-blue dark:text-slate-100">
+
+    <header id="topBar" class="fixed top-0 inset-x-0 h-16 bg-white/80 dark:bg-slate-900/70 backdrop-blur-sm z-50">
+        <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-lg font-semibold">AeroSilva</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/"
+                    class="px-4 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Home</a>
+                <button id="themeBtn"
+                    class="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700 transition text-sm"
+                    title="Click to toggle theme">
+                    System Theme
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-4xl w-full prose prose-slate dark:prose-invert">
+            <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-center">Cookie Policy</h1>
+            <p>This website does not use cookies. We believe in a straightforward and private browsing experience, which
+                is why we have chosen not to use any cookies on this site.</p>
+            <p>Your privacy is important to us, and our commitment to not using cookies is a reflection of that. You can
+                browse this website with the assurance that we are not tracking your activity or storing any data on
+                your device.</p>
+        </div>
+    </main>
+
+    <footer
+        class="text-center py-8 px-4 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800">
+        <div class="space-y-2">
+            <p>© 2025 Flapper s.r.o. | Soubezna 1053/25, 46601 Jablonec nad Nisou, Czech Republic</p>
+            <p>Company registration ID: 17280419, VAT ID: CZ17280419</p>
+            <div class="flex justify-center gap-4">
+                <a href="./privacy" class="hover:underline">Privacy Policy</a>
+                <a href="./cookies" class="hover:underline">Cookie Policy</a>
+                <a href="./terms" class="hover:underline">General Terms</a>
+            </div>
+            <p class="pt-2">Designed by MageeWP Themes.</p>
+        </div>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('themeBtn');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+        // apply theme: 'dark' | 'light'
+        function applyTheme(mode) {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+
+        function getStoredTheme() {
+            return localStorage.getItem('theme'); // 'dark'|'light' or null
+        }
+
+        function updateButtonLabel() {
+            const stored = getStoredTheme();
+            if (stored === 'dark') {
+                btn.textContent = 'Theme: Dark';
+            } else if (stored === 'light') {
+                btn.textContent = 'Theme: Light';
+            } else {
+                btn.textContent = 'Theme: System';
+            }
+        }
+
+        // Handles system theme changes
+        const systemThemeChangeHandler = () => {
+            if (!getStoredTheme()) { // only apply if no override is set
+                applyTheme(prefersDark.matches ? 'dark' : 'light');
+                updateButtonLabel();
+            }
+        };
+        if (prefersDark.addEventListener) prefersDark.addEventListener('change', systemThemeChangeHandler);
+        else if (prefersDark.addListener) prefersDark.addListener(systemThemeChangeHandler);
+
+        // initialize: follow stored override if present, otherwise follow system
+        (function initTheme() {
+            const stored = getStoredTheme();
+            if (stored) applyTheme(stored);
+            else applyTheme(prefersDark.matches ? 'dark' : 'light');
+            updateButtonLabel();
+        })();
+
+        // click cycles through themes: System -> Opposite -> Dark -> System
+        btn.addEventListener('click', () => {
+            const stored = getStoredTheme();
+
+            if (stored === 'light') {
+                // From Light -> Dark
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else if (stored === 'dark') {
+                // From Dark -> System
+                localStorage.removeItem('theme');
+                applyTheme(prefersDark.matches ? 'dark' : 'light');
+            } else { // stored is null (system)
+                // From System -> Opposite of System
+                const next = prefersDark.matches ? 'light' : 'dark';
+                localStorage.setItem('theme', next);
+                applyTheme(next);
+            }
+            updateButtonLabel();
+        });
+    </script>
+
+</body>
+
+</html>

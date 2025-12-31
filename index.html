@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AeroSilva</title>
+
+  <!-- Inter font + Tailwind Play CDN (modern UI utility library) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- slide transition styles -->
+  <style>
+    /* initial hidden state for sliding blocks */
+    .slide-init {
+      transform: translateY(32px);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* visible state when element should slide into view */
+    .slide-visible {
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 750ms cubic-bezier(.2, .9, .2, 1), opacity 750ms ease;
+    }
+
+    /* header subtle upward slide when page is scrolled down */
+    header.slide-init {
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 500ms cubic-bezier(.2, .9, .2, 1), opacity 500ms ease;
+    }
+
+    header.scrolled {
+      transform: translateY(-18px);
+      opacity: 0.95;
+    }
+  </style>
+
+  <script>
+    // Use class-based dark mode so manual override is possible; initial theme will follow system unless overridden
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'custom-blue': '#151B2C',
+            'custom-dark-blue': '#151B2C',
+            'custom-dark-blue-alt': '#05213a',
+            'custom-light-gray': '#e4e4e4',
+            'custom-dark-bg': '#09375A',
+            'custom-title-blue': '#3E9ADE',
+          },
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="pt-16 antialiased font-inter bg-white text-slate-800 dark:bg-custom-dark-bg dark:text-slate-100">
+
+  <!-- Top bar -->
+  <header id="topBar" class="fixed top-0 inset-x-0 h-16 backdrop-blur-sm z-50 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-lg font-semibold">AeroSilva</a>
+        <span class="hidden sm:inline-block text-sm text-slate-500 dark:text-slate-400">Modern Flapper</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <nav class="hidden sm:flex items-center gap-1">
+          <a href="#details"
+            class="px-3 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Features</a>
+          <a href="#innovation"
+            class="px-3 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Innovation</a>
+          <a href="#specifications"
+            class="px-3 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Specifications</a>
+          <a href="#clients"
+            class="px-3 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">Clients</a>
+          <a href="#about"
+            class="px-3 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">About</a>
+        </nav>
+        <a href="./buy"
+          class="px-4 py-1.5 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 text-sm font-semibold">Purchase
+          Now</a>
+        <!-- Theme toggle (manual override). Kept here in top bar -->
+        <button id="themeBtn" class="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700 transition text-sm"
+          title="Click to toggle theme">
+          System Theme
+        </button>
+        <!-- Hamburger menu for smaller screens -->
+        <button id="menuBtn"
+          class="sm:hidden p-2 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden sm:hidden bg-white/80 dark:bg-slate-900/70 backdrop-blur-sm">
+      <nav class="flex flex-col p-4">
+        <a href="#details"
+          class="py-2 px-4 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Features</a>
+        <a href="#innovation"
+          class="py-2 px-4 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Innovation</a>
+        <a href="#specifications"
+          class="py-2 px-4 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Specifications</a>
+        <a href="#clients"
+          class="py-2 px-4 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Clients</a>
+        <a href="#about"
+          class="py-2 px-4 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO / CENTERED PAGE (full viewport) -->
+  <!-- add slide-init so header content can animate out/in -->
+  <header class="relative min-h-screen flex items-center p-6 slide-init" id="heroHeader"
+    style="background-image: url('image/main-back.jpg'); background-size: cover; background-position: center;">
+    <div class="absolute inset-0 bg-black/30"></div>
+    <div class="relative max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <!-- Left Col -->
+      <div class="text-left space-y-6 slide-init p-6 rounded-md">
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Quiet, flexible flight for delicate, daring missions.
+        </h2>
+        <p class="text-base text-white">
+          Our ultra-light dual-flapping-wing drone captures wildlife as it truly is — undisturbed, natural, and free.
+          Designed for filmmakers and conservationists, it glides with near-silent motion, low downwash, and precise
+          maneuverability, revealing moments impossible for traditional drones to record.
+        </p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Step closer to nature. <br> See the world without
+          disrupting it.</h2>
+      </div>
+      <!-- Right Col -->
+      <section class="w-full text-right space-y-6 slide-init" id="heroMain">
+        <h1 class="text-8xl sm:text-9xl font-extrabold leading-tight text-white">AeroSilva</h1>
+      </section>
+    </div>
+  </header>
+
+  <!-- DETAILS PAGE (revealed when user scrolls down) -->
+  <section id="details" class="py-12 p-8">
+    <div class="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <!-- Left: photo area -->
+      <div class="space-y-4 slide-init">
+        <div class="aspect-w-16 aspect-h-9 w-full bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+          <img src="image/content-1.jpg" alt="AeroSilva Drone in nature" class="object-cover w-full h-full">
+        </div>
+      </div>
+
+      <!-- Right: description area -->
+      <div class="prose prose-slate dark:prose-invert max-w-none slide-init">
+        <h2 class="text-3xl sm:text-4xl font-bold text-custom-title-blue dark:text-white">AeroSilva — Dual-Flapping-Wing
+          Documentary Drone</h2>
+        <p class="mt-12">Inspired by the flight of birds and insects, AeroSilva is an ultra-light, low-noise UAV
+          designed specifically
+          for wildlife documentaries and ecological observation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRUCTURAL DESIGN PAGE -->
+
+  <section id="structural-design" class="py-12 p-8 bg-custom-light-gray dark:bg-sky-800">
+    <div class="max-w-5xl mx-auto w-full text-slate-800 dark:text-slate-100">
+      <div class="prose max-w-none slide-init text-center text-slate-800 dark:text-slate-100">
+        <h2 class="text-3xl sm:text-4xl font-bold text-custom-title-blue dark:text-white">Features</h2>
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left">
+          <div>
+            <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Structural design</h3>
+            <ul class="list-none p-0">
+              <li>
+                <h4 class="text-lg font-semibold">Flapping-wing system</h4>
+                <p>Dual-wing mechanism with 26 Hz frequency, Mylar & polycarbonate variant wings, and carbon-rod
+                  reinforcement for controlled passive twist.</p>
+              </li>
+              <li>
+                <h4 class="text-lg font-semibold">Lightweight frame</h4>
+                <p>23 g lightweight design with a PLA fuselage and carbon-fiber linkages.</p>
+              </li>
+              <li>
+                <h4 class="text-lg font-semibold">Control & electronics</h4>
+                <p>Microcontroller, motor driver, optional micro-camera mount, and a battery module for field filming.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Functions</h3>
+            <ul class="list-none p-0">
+              <li>
+                <h4 class="text-lg font-semibold">Quiet wildlife filming</h4>
+                <p>Quiet wildlife filming without disturbing animals.</p>
+              </li>
+              <li>
+                <h4 class="text-lg font-semibold">Maneuverable flight</h4>
+                <p>Maneuverable flight in forests, caves, and tight habitats.</p>
+              </li>
+              <li>
+                <h4 class="text-lg font-semibold">Low-downwash operation</h4>
+                <p>Low-downwash operation that preserves plants and terrain.</p>
+              </li>
+              <li>
+                <h4 class="text-lg font-semibold">Optional ecological monitoring</h4>
+                <p>Optional ecological monitoring: temperature, humidity, soundscape.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADVANTAGES PAGE -->
+  <section id="advantages" class="py-12 p-8 bg-white dark:bg-custom-dark-bg">
+    <div class="max-w-5xl mx-auto w-full dark:text-white">
+      <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-center dark:text-white">
+        <h2 class="text-3xl sm:text-4xl font-bold text-custom-title-blue dark:text-white">Advantages</h2>
+        <ul class="list-none p-0 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left mt-12">
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Natural sound</h4>
+            <p class="dark:text-white">Low-frequency sound that is less intrusive.</p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Flexible flight</h4>
+            <p class="dark:text-white">Fits into narrow spaces where traditional drones cannot enter.
+            </p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Ultra-light</h4>
+            <p class="dark:text-white">Less than 23 g for safety and minimal disturbance.</p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Low downwash</h4>
+            <p class="dark:text-white">Does not blow leaves, grass, nests, or dust.</p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Energy-efficient</h4>
+            <p class="dark:text-white">Propulsive efficiency of 80%.</p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Natural Behavior</h4>
+            <p class="dark:text-white">Captures natural behavior without causing stress.</p>
+          </li>
+          <li>
+            <h4 class="text-lg font-semibold dark:text-white">Customizable</h4>
+            <p class="dark:text-white">Modular wings, sensors, and camera mounts.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- INNOVATION PAGE -->
+
+  <section id="innovation" class="py-12 px-0">
+    <div class="w-full bg-custom-light-gray dark:bg-sky-800">
+      <div class="max-w-5xl mx-auto w-full slide-init text-center py-12">
+        <h2 class="text-4xl sm:text-5xl font-extrabold dark:text-white text-custom-title-blue">Our Innovation</h2>
+      </div>
+    </div>
+    <!-- Biomimetic Flight Architecture subsection -->
+    <div class="w-full bg-custom-light-gray dark:bg-sky-800">
+      <div class="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8">
+        <!-- Left: photo area -->
+        <div class="space-y-4 slide-init">
+          <div class="aspect-w-16 aspect-h-9 w-full bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+            <img src="image/content-2.jpg" alt="AeroSilva Drone Innovation" class="object-cover w-full h-full">
+          </div>
+        </div>
+        <!-- Right: text area -->
+        <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-justify">
+          <h3 class="text-2xl sm:text-3xl font-bold text-custom-title-blue dark:text-white">Biomimetic Flight
+            Architecture</h3>
+          <ul>
+            <li>Our drone replicates natural bird- and insect-like flight using a dual flapping-wing system.</li>
+            <li>Through multi-degree-of-freedom motion and passive aerodynamic effects, it achieves silent, agile, and
+              low-disturbance flight—ideal for wildlife documentaries.</li>
+            <li>Unlike propeller drones, the design minimizes downwash and prevents disruption of habitats, nests, or
+              vegetation.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Lightweight System subsection -->
+    <div class="w-full bg-custom-light-gray dark:bg-sky-800">
+      <div class="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8">
+        <!-- Left: photo area -->
+        <div class="space-y-4 slide-init">
+          <div class="aspect-w-16 aspect-h-9 w-full bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+            <img src="image/content-3.jpg" alt="Lightweight System" class="object-cover w-full h-full">
+          </div>
+        </div>
+        <!-- Right: text area -->
+        <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-justify">
+          <h3 class="text-2xl sm:text-3xl font-bold text-custom-title-blue dark:text-white">Lightweight Structural
+            System (&lt;23 g Total Mass)</h3>
+          <ul class="mt-12">
+            <li>The entire airframe—including transmission, wing mounts, battery tray, and fuselage—is engineered around
+              extreme weight reduction.</li>
+            <li>A PLA-carbon-fiber hybrid frame provides strength without bulk, while the simplified linkage and removal
+              of unnecessary servos improve efficiency.</li>
+            <li>This design enables longer endurance, safer operation near animals, and the ability to carry small
+              filming modules.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Wing Technology subsection -->
+    <div class="w-full bg-custom-light-gray dark:bg-sky-800">
+      <div class="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8">
+        <!-- Left: photo area -->
+        <div class="space-y-4 slide-init">
+          <div class="aspect-w-16 aspect-h-9 w-full bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+            <img src="image/content-4.jpg" alt="Wing Technology" class="object-cover w-full h-full">
+          </div>
+        </div>
+        <!-- Right: text area -->
+        <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-justify">
+          <h3 class="text-2xl sm:text-3xl font-bold text-custom-title-blue dark:text-white">Flexible High-Efficiency
+            Wing Technology</h3>
+          <ul class="mt-12">
+            <li>Using a 10 µm Mylar membrane with a 0.7 mm carbon-rod reinforcement, the wings maintain structural
+              stability while enabling passive torsion.</li>
+            <li>This natural twist increases thrust, lowers energy consumption, and stabilizes leading-edge vortices
+              during flapping.</li>
+            <li>Compared to polycarbonate wings, the membrane design reduces mass by an order of magnitude and doubles
+              thrust efficiency.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Quiet Motion subsection -->
+    <div class="w-full bg-custom-light-gray dark:bg-sky-800">
+      <div class="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8">
+        <!-- Left: photo area -->
+        <div class="space-y-4 slide-init">
+          <div class="aspect-w-16 aspect-h-9 w-full bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+            <img src="image/content-5.jpg" alt="Quiet Motion" class="object-cover w-full h-full">
+          </div>
+        </div>
+        <!-- Right: text area -->
+        <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-justify">
+          <h3 class="text-2xl sm:text-3xl font-bold text-custom-title-blue dark:text-white">Quiet, Low-Downwash Motion
+          </h3>
+          <ul class="mt-12">
+            <li>Flapping flight generates dramatically less noise than electric motors driving propellers.</li>
+            <li>The drone’s acoustic signature blends into natural environments, allowing filmmakers to shoot rare
+              animal behavior without intimidation or escape responses.</li>
+            <li>Low downwash ensures leaves, branches, and dust remain undisturbed—maintaining the authenticity of every
+              shot.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- SPECIFICATIONS PAGE -->
+  <section id="specifications" class="py-12 p-8">
+    <div class="max-w-5xl mx-auto w-full">
+      <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-custom-title-blue dark:text-white">Specifications</h2>
+        <ul class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left">
+          <li><strong>Total Weight:</strong> 23 g</li>
+          <li><strong>Wingspan:</strong> 30 cm; Individual wing: 15 cm × 10 cm</li>
+          <li><strong>Wing Material:</strong>
+            <ul class="list-disc pl-5">
+              <li>PET Mylar membrane (~10–12 μm thickness)</li>
+              <li>0.6 mm carbon fiber rod</li>
+            </ul>
+          </li>
+          <li><strong>Flapping Frequency:</strong>
+            <ul class="list-disc pl-5">
+              <li>Nominal: 26 Hz</li>
+              <li>Adjustable range: ~18–26 Hz</li>
+            </ul>
+          </li>
+          <li><strong>Flapping Amplitude:</strong> Maximum wing stroke angle: ~60°</li>
+          <li><strong>Propulsive Efficiency:</strong> 80%</li>
+          <li><strong>Reynolds Number:</strong> 5 × 10⁴</li>
+          <li><strong>Payload Capacity:</strong> 3-5 g (suitable for micro camera or sensor module)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUR PRODUCTS SECTION -->
+  <section id="products" class="py-12 p-8 bg-white dark:bg-custom-dark-bg">
+    <div class="max-w-5xl mx-auto w-full">
+      <div class="prose prose-slate dark:prose-invert max-w-none slide-init text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-custom-title-blue dark:text-white">Our Products</h2>
+      </div>
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Product 1: AeroSilva Drone -->
+        <div
+          class="bg-custom-light-gray dark:bg-sky-800 rounded-lg p-6 flex flex-col items-center text-center slide-init">
+          <img src="image/products/aerosilva.jpg" alt="AeroSilva Drone"
+            class="w-full h-48 object-cover rounded-lg mb-4">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">AeroSilva Drone</h3>
+          <p class="text-slate-800 dark:text-slate-100 mt-2">The core flapping-wing drone, engineered for silent,
+            close-range wildlife filming.</p>
+          <p class="text-lg font-semibold text-emerald-600 dark:text-emerald-400 mt-4">CNY 520</p>
+        </div>
+        <!-- Product 2: Battery -->
+        <div
+          class="bg-custom-light-gray dark:bg-sky-800 rounded-lg p-6 flex flex-col items-center text-center slide-init">
+          <img src="image/products/battery.jpg" alt="High-Capacity Battery"
+            class="w-full h-48 object-cover rounded-lg mb-4">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">High-Capacity Battery</h3>
+          <p class="text-slate-800 dark:text-slate-100 mt-2">Extended-life battery module to maximize your flight time
+            in the field.</p>
+          <p class="text-lg font-semibold text-emerald-600 dark:text-emerald-400 mt-4">CNY 30</p>
+        </div>
+        <!-- Product 3: RC Controller -->
+        <div
+          class="bg-custom-light-gray dark:bg-sky-800 rounded-lg p-6 flex flex-col items-center text-center slide-init">
+          <img src="image/products/rc.jpg" alt="Precision RC Controller"
+            class="w-full h-48 object-cover rounded-lg mb-4">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Precision RC Controller</h3>
+          <p class="text-slate-800 dark:text-slate-100 mt-2">Ergonomic remote controller for precise and intuitive
+            flight maneuvers.</p>
+          <p class="text-lg font-semibold text-emerald-600 dark:text-emerald-400 mt-4">CNY 180</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS SECTION -->
+  <section id="clients" class="py-12 p-8 bg-custom-light-gray dark:bg-sky-800">
+    <div class="max-w-5xl mx-auto w-full slide-init">
+      <h2 class="text-4xl sm:text-5xl font-extrabold text-center text-custom-title-blue dark:text-white">Our Clients
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
+        <div class="prose prose-slate dark:prose-invert max-w-none flex flex-col items-center text-justify">
+          <img src="image/client-1.jpg" alt="Documentary Filmmakers" class="w-24 h-24 rounded-full mb-4 object-cover">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Documentary Filmmakers</h3>
+          <ol>
+            <li>Filmmakers can capture animals in their natural state because the flapping-wing drone is quiet and
+              minimally disturbing, allowing more authentic wildlife footage.</li>
+            <li>Filmmakers can safely enter dense forests, caves, and narrow habitats where traditional quadcopters
+              cannot fly without risking noise, collisions, or vegetation damage.</li>
+            <li>Filmmakers can rely on stable, close-range shots enabled by low-downwash flight, reducing retakes and
+              production costs.</li>
+          </ol>
+        </div>
+        <div class="prose prose-slate dark:prose-invert max-w-none flex flex-col items-center text-justify">
+          <img src="image/client-2.jpg" alt="Wildlife Conservation Organizations"
+            class="w-24 h-24 rounded-full mb-4 object-cover">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Wildlife Conservation Organizations</h3>
+          <ol>
+            <li>Conservation teams can observe endangered species discreetly, preventing stress responses triggered by
+              loud propeller drones and enabling more accurate behavioral data.</li>
+            <li>Conservation organizations can monitor nests, movements, and habitats with a low-impact aircraft that
+              reduces the risk of wildlife disturbance or accidental injury.</li>
+          </ol>
+        </div>
+        <div class="prose prose-slate dark:prose-invert max-w-none flex flex-col items-center text-justify">
+          <img src="image/client-3.jpg" alt="Environmental Agencies" class="w-24 h-24 rounded-full mb-4 object-cover">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Environmental Agencies</h3>
+          <ol>
+            <li>Agencies can perform ecological surveys in sensitive areas—such as forests, wetlands, or protected
+              reserves—without disturbing animals or fragile environments.</li>
+            <li>Agencies can use the drone for quiet surveillance to detect illegal activities (e.g., trapping, habitat
+              destruction), supporting better environmental policies.</li>
+          </ol>
+        </div>
+        <div class="prose prose-slate dark:prose-invert max-w-none flex flex-col items-center text-justify">
+          <img src="image/client-4.jpg" alt="Nature & Wildlife Hobbyists"
+            class="w-24 h-24 rounded-full mb-4 object-cover">
+          <h3 class="text-2xl font-bold text-custom-title-blue dark:text-white">Nature & Wildlife Hobbyists</h3>
+          <ol>
+            <li>Hobbyists can observe birds and small mammals up close without scaring them, thanks to the drone’s quiet
+              and gentle flight.</li>
+            <li>Hobbyists benefit from a lightweight, safe, and affordable platform suitable for filming wildlife
+              responsibly.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="booking" class="py-12 p-6 flex items-center justify-center">
+    <div id="booking" class="max-w-4xl mx-auto prose prose-slate dark:prose-invert text-justify slide-init">
+      <h2 class="text-4xl sm:text-5xl font-extrabold text-center text-custom-title-blue dark:text-white">Booking Service
+      </h2>
+      <p class="mt-12">Filmmakers, wildlife conservation teams, and environmental agencies can rely on AeroSilva to
+        capture
+        close-range wildlife behavior and delicate ecological details with minimal disturbance. Its ultra-quiet flapping
+        wings allow filming in natural habitats without creating fear or altering animal behavior. Users can access
+        real-time visual data to make better decisions, such as adjusting filming strategies, monitoring protected
+        species, or assessing sensitive environments. Camera and sensor payloads can be customized depending on mission
+        requirements, from wildlife documentaries to environmental scouting.</p>
+      <p class="mt-4 font-bold">If you are interested in AeroSilva, book a session with us to discuss your project needs
+        and mission roadmap.</p>
+      <div class="text-center">
+        <a href="./buy"
+          class="inline-block px-6 py-3 mt-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 text-lg font-semibold">
+          Book a Session
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT US SECTION -->
+  <section id="about" class="py-12 p-6 flex items-center justify-center bg-custom-light-gray dark:bg-sky-800">
+    <div class="max-w-4xl w-full space-y-12 slide-init">
+      <div class="space-y-4 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-custom-title-blue dark:text-white">Our Team
+        </h1>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Team Member 1 -->
+        <div class="space-y-3 text-center">
+          <img src="image/dx.jpg" alt="Daniel Xu" class="w-32 h-32 mx-auto rounded-full object-cover">
+          <h3 class="font-bold text-lg">Daniel Xu</h3>
+          <p class="text-slate-500 dark:text-slate-400">Mechanical Engineering & Physics Lead</p>
+          <p class="text-slate-500 dark:text-slate-400 text-center">As a mechanically driven engineer with a strong
+            background in physics, he leads the design and construction of the dual flapping-wing drone. He translates
+            aerodynamic theory into functional prototypes, oversees material selection and structural optimization, and
+            conducts performance testing and data analysis. His experience in high-level physics competitions and
+            academic research allows the team to ground innovation in rigorous scientific principles.</p>
+        </div>
+        <!-- Team Member 2 -->
+        <div class="space-y-3 text-center">
+          <img src="image/hx.jpg" alt="Hanson Xu" class="w-32 h-32 mx-auto rounded-full object-cover">
+          <h3 class="font-bold text-lg">Hanson Xu</h3>
+          <p class="text-slate-500 dark:text-slate-400">Business Strategy & Commercialization Lead</p>
+          <p class="text-slate-500 dark:text-slate-400 text-center">With a strong foundation in finance and economics,
+            he
+            is responsible for market research, cost analysis, and commercialization strategy. He develops pricing
+            models, evaluates customer needs, and ensures the project remains economically viable. His competition
+            experience and analytical mindset help bridge the gap between technical innovation and real-world
+            application.</p>
+        </div>
+        <!-- Team Member 3 -->
+        <div class="space-y-3 text-center">
+          <img src="image/sc.jpg" alt="Sam Cao" class="w-32 h-32 mx-auto rounded-full object-cover">
+          <h3 class="font-bold text-lg">Sam Cao</h3>
+          <p class="text-slate-500 dark:text-slate-400">Software, Systems & Integration Lead</p>
+          <p class="text-slate-500 dark:text-slate-400 text-center">As a STEM-focused problem solver with advanced
+            training in physics, computer science, and mathematics, he supports system integration and technical
+            optimization. He contributes to coding, data processing, and control logic, while also assisting with
+            modeling and performance evaluation. His interdisciplinary strengths help ensure that hardware, software,
+            and theory work together as a complete system.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- CONTACT SECTION -->
+  <section id="contact" class="py-12 p-6 flex items-center justify-center">
+    <div class="max-w-4xl mx-auto prose prose-slate dark:prose-invert text-center slide-init">
+      <h2 class="text-4xl sm:text-5xl font-extrabold text-custom-title-blue dark:text-white">Contact Us</h2>
+      <p class="mt-12">Have questions or want to learn more? Reach out to us.</p>
+      <p>Email: <a href="mailto:danielxujiaze@outlook.com">danielxujiaze@outlook.com</a></p>
+      <p>Phone: +86 13520667611</p>
+    </div>
+  </section>
+  <footer
+    class="text-center py-8 px-4 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800">
+    <div class="space-y-2">
+      <p>© 2025 AeroSilva Robotics</p>
+      <div class="flex justify-center gap-4">
+        <a href="./privacy" class="hover:underline">Privacy Policy</a>
+        <a href="./cookies" class="hover:underline">Cookie Policy</a>
+        <a href="./terms" class="hover:underline">General Terms</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    const btn = document.getElementById('themeBtn');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // apply theme: 'dark' | 'light'
+    function applyTheme(mode) {
+      if (mode === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+
+    function getStoredTheme() {
+      return localStorage.getItem('theme'); // 'dark'|'light' or null
+    }
+
+    function updateButtonLabel() {
+      const stored = getStoredTheme();
+      if (stored === 'dark') {
+        btn.textContent = 'Theme: Dark';
+      } else if (stored === 'light') {
+        btn.textContent = 'Theme: Light';
+      } else {
+        btn.textContent = 'Theme: System';
+      }
+    }
+
+    // Handles system theme changes
+    const systemThemeChangeHandler = () => {
+      if (!getStoredTheme()) { // only apply if no override is set
+        applyTheme(prefersDark.matches ? 'dark' : 'light');
+        updateButtonLabel();
+      }
+    };
+    if (prefersDark.addEventListener) prefersDark.addEventListener('change', systemThemeChangeHandler);
+    else if (prefersDark.addListener) prefersDark.addListener(systemThemeChangeHandler);
+
+    // initialize: follow stored override if present, otherwise follow system
+    (function initTheme() {
+      const stored = getStoredTheme();
+      if (stored) applyTheme(stored);
+      else applyTheme(prefersDark.matches ? 'dark' : 'light');
+      updateButtonLabel();
+    })();
+
+    // click cycles through themes: System -> Opposite -> Dark -> System
+    btn.addEventListener('click', () => {
+      const stored = getStoredTheme();
+
+      if (stored === 'light') {
+        // From Light -> Dark
+        localStorage.setItem('theme', 'dark');
+        applyTheme('dark');
+      } else if (stored === 'dark') {
+        // From Dark -> System
+        localStorage.removeItem('theme');
+        applyTheme(prefersDark.matches ? 'dark' : 'light');
+      } else { // stored is null (system)
+        // From System -> Opposite of System
+        const next = prefersDark.matches ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+      }
+      updateButtonLabel();
+    });
+
+    // Hamburger menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // IntersectionObserver to add slide-visible when content enters viewport
+    (function () {
+      const sections = document.querySelectorAll('#details, #structural-design, #innovation, #lightweight-system, #wing-technology, #quiet-motion, #features, #advantages, #specifications, #products, #clients, #booking, #about, #contact');
+      const heroHeader = document.getElementById('heroHeader');
+      const topBar = document.getElementById('topBar');
+
+      function revealNode(node) {
+        node.classList.add('slide-visible');
+      }
+      function hideNode(node) {
+        node.classList.remove('slide-visible');
+      }
+
+      const intersectingSections = new Set();
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const children = entry.target.querySelectorAll('.slide-init');
+          if (entry.isIntersecting) {
+            intersectingSections.add(entry.target.id);
+            children.forEach(revealNode);
+          } else {
+            intersectingSections.delete(entry.target.id);
+            children.forEach(hideNode);
+          }
+        });
+
+        if (intersectingSections.size > 0) {
+          heroHeader.classList.add('scrolled');
+          topBar.classList.add('bg-white/80', 'dark:bg-slate-900/70');
+        } else {
+          heroHeader.classList.remove('scrolled');
+          topBar.classList.remove('bg-white/80', 'dark:bg-slate-900/70');
+        }
+      }, { root: null, threshold: 0.1 });
+
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+
+      window.addEventListener('load', () => {
+        document.querySelectorAll('#heroHeader .slide-init, #heroMain.slide-init').forEach(revealNode);
+      });
+    })();
+  </script>
+</body>
+
+</html>

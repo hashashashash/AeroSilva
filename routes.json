@@ -1,0 +1,96 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "file": "web/index.html"
+    },
+    {
+      "path": "/image/main-back.jpg",
+      "file": "web/image/main-back.jpg"
+    },
+    {
+      "path": "/image/11.png",
+      "file": "web/image/11.png"
+    },
+    {
+      "path": "/image/content-1.jpg",
+      "file": "web/image/content-1.jpg"
+    },
+    {
+      "path": "/image/content-2.jpg",
+      "file": "web/image/content-2.jpg"
+    },
+    {
+      "path": "/image/content-3.jpg",
+      "file": "web/image/content-3.jpg"
+    },
+    {
+      "path": "/image/content-4.jpg",
+      "file": "web/image/content-4.jpg"
+    },
+    {
+      "path": "/image/content-5.jpg",
+      "file": "web/image/content-5.jpg"
+    },
+    {
+      "path": "/image/client-1.jpg",
+      "file": "web/image/client-1.jpg"
+    },
+    {
+      "path": "/image/client-2.jpg",
+      "file": "web/image/client-2.jpg"
+    },
+    {
+      "path": "/image/client-3.jpg",
+      "file": "web/image/client-3.jpg"
+    },
+    {
+      "path": "/image/client-4.jpg",
+      "file": "web/image/client-4.jpg"
+    },
+    {
+      "path": "/image/products/aerosilva.jpg",
+      "file": "web/image/products/aerosilva.jpg"
+    },
+    {
+      "path": "/image/products/battery.jpg",
+      "file": "web/image/products/battery.jpg"
+    },
+    {
+      "path": "/image/products/rc.jpg",
+      "file": "web/image/products/rc.jpg"
+    },
+    {
+      "path": "/image/dx.jpg",
+      "file": "web/image/dx.jpg"
+    },
+    {
+      "path": "/image/hx.jpg",
+      "file": "web/image/hx.jpg"
+    },
+    {
+      "path": "/image/sc.jpg",
+      "file": "web/image/sc.jpg"
+    },
+    {
+      "path": "/specifications",
+      "file": "web/specifications.html"
+    },
+    {
+      "path": "/privacy",
+      "file": "web/privacy.html"
+    },
+    {
+      "path": "/cookies",
+      "file": "web/cookies.html"
+    },
+    {
+      "path": "/terms",
+      "file": "web/terms.html"
+    },
+    {
+      "path": "/buy",
+      "file": "web/buy.html"
+    }
+  ]
+}

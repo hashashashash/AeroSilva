@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AeroSilva - Purchase</title>
+
+  <!-- Inter font + Tailwind Play CDN (modern UI utility library) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- slide transition styles -->
+  <style>
+    /* initial hidden state for sliding blocks */
+    .slide-init {
+      transform: translateY(32px);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* visible state when element should slide into view */
+    .slide-visible {
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 750ms cubic-bezier(.2, .9, .2, 1), opacity 750ms ease;
+    }
+
+    /* header subtle upward slide when page is scrolled down */
+    header.slide-init {
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 500ms cubic-bezier(.2, .9, .2, 1), opacity 500ms ease;
+    }
+
+    header.scrolled {
+      transform: translateY(-18px);
+      opacity: 0.95;
+    }
+  </style>
+
+  <script>
+    // Use class-based dark mode so manual override is possible; initial theme will follow system unless overridden
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'custom-blue': '#151B2C',
+            'custom-dark-blue': '#151B2C',
+          },
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="pt-16 antialiased font-inter bg-white text-slate-800 dark:bg-custom-dark-blue dark:text-slate-100">
+
+  <!-- Top bar -->
+  <header id="topBar" class="fixed top-0 inset-x-0 h-16 backdrop-blur-sm z-50 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-lg font-semibold">AeroSilva</a>
+        <span class="hidden sm:inline-block text-sm text-slate-500 dark:text-slate-400">Modern Flapper</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/#about"
+          class="px-4 py-1.5 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm font-semibold">About
+          Us</a>
+        <a href="./buy"
+          class="px-4 py-1.5 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 text-sm font-semibold">Purchase
+          Now</a>
+        <!-- Theme toggle (manual override). Kept here in top bar -->
+        <button id="themeBtn" class="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700 transition text-sm"
+          title="Click to toggle theme">
+          System Theme
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-4xl mx-auto prose prose-slate dark:prose-invert text-center slide-init">
+      <div id="booking-content">
+        <h1 class="text-4xl sm:text-5xl font-extrabold">Book a Session</h1>
+        <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300">
+          Enter your email address to receive a link for booking a time and for more information.
+        </p>
+        <form id="bookingForm" class="mt-8 max-w-sm mx-auto sm:flex">
+          <label for="email-address" class="sr-only">Email address</label>
+          <input id="email-address" name="email" type="email" autocomplete="email" required
+            class="w-full px-5 py-3 border border-slate-300 dark:border-slate-700 shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-md dark:bg-slate-800"
+            placeholder="you@example.com">
+          <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+            <button type="submit"
+              class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:ring-offset-slate-900">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer
+    class="text-center py-8 px-4 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800">
+    <div class="space-y-2">
+      <p>© 2025 Flapper s.r.o. | Soubezna 1053/25, 46601 Jablonec nad Nisou, Czech Republic</p>
+      <p>Company registration ID: 17280419, VAT ID: CZ17280419</p>
+      <div class="flex justify-center gap-4">
+        <a href="./privacy" class="hover:underline">Privacy Policy</a>
+        <a href="./cookies" class="hover:underline">Cookie Policy</a>
+        <a href="./terms" class="hover:underline">General Terms</a>
+      </div>
+      <p class="pt-2">Designed by MageeWP Themes.</p>
+    </div>
+  </footer>
+
+  <script>
+    const btn = document.getElementById('themeBtn');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // apply theme: 'dark' | 'light'
+    function applyTheme(mode) {
+      if (mode === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+
+    function getStoredTheme() {
+      return localStorage.getItem('theme'); // 'dark'|'light' or null
+    }
+
+    function updateButtonLabel() {
+      const stored = getStoredTheme();
+      if (stored === 'dark') {
+        btn.textContent = 'Theme: Dark';
+      } else if (stored === 'light') {
+        btn.textContent = 'Theme: Light';
+      } else {
+        btn.textContent = 'Theme: System';
+      }
+    }
+
+    // Handles system theme changes
+    const systemThemeChangeHandler = () => {
+      if (!getStoredTheme()) { // only apply if no override is set
+        applyTheme(prefersDark.matches ? 'dark' : 'light');
+        updateButtonLabel();
+      }
+    };
+    if (prefersDark.addEventListener) prefersDark.addEventListener('change', systemThemeChangeHandler);
+    else if (prefersDark.addListener) prefersDark.addListener(systemThemeChangeHandler);
+
+    // initialize: follow stored override if present, otherwise follow system
+    (function initTheme() {
+      const stored = getStoredTheme();
+      if (stored) applyTheme(stored);
+      else applyTheme(prefersDark.matches ? 'dark' : 'light');
+      updateButtonLabel();
+    })();
+
+    // click cycles through themes: System -> Opposite -> Dark -> System
+    btn.addEventListener('click', () => {
+      const stored = getStoredTheme();
+
+      if (stored === 'light') {
+        // From Light -> Dark
+        localStorage.setItem('theme', 'dark');
+        applyTheme('dark');
+      } else if (stored === 'dark') {
+        // From Dark -> System
+        localStorage.removeItem('theme');
+        applyTheme(prefersDark.matches ? 'dark' : 'light');
+      } else { // stored is null (system)
+        // From System -> Opposite of System
+        const next = prefersDark.matches ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+      }
+      updateButtonLabel();
+    });
+
+    // IntersectionObserver to add slide-visible when content enters viewport
+    (function () {
+      const mainContent = document.querySelector('main .slide-init');
+
+      function revealNode(node) {
+        node.classList.add('slide-visible');
+      }
+
+      window.addEventListener('load', () => {
+        if (mainContent) {
+          revealNode(mainContent);
+        }
+      });
+    })();
+
+    // handle form submission
+    (function () {
+      const form = document.getElementById('bookingForm');
+      const content = document.getElementById('booking-content');
+      if (form && content) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          content.innerHTML = `
+            <h1 class="text-4xl sm:text-5xl font-extrabold">Success!</h1>
+            <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300">
+              Thank you for your interest. A booking link will be sent to your email address shortly.
+            </p>
+          `;
+        });
+      }
+    })();
+  </script>
+</body>
+
+</html>
