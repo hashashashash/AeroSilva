@@ -5,6 +5,10 @@
       "file": "web/index.html"
     },
     {
+      "path": "/image/logo.png",
+      "file": "web/image/logo.png"
+    },
+    {
       "path": "/image/main-back.jpg",
       "file": "web/image/main-back.jpg"
     },
